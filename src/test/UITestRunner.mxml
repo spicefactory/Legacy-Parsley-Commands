@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:adobe="http://www.adobe.com/2009/flexUnitUIRunner"
+	creationComplete="run()" 
+	>
+
+	<mx:Script>
+		<![CDATA[
+
+			import org.flexunit.listeners.UIListener;
+			import org.flexunit.runner.FlexUnitCore;
+			import org.spicefactory.lib.reflect.Metadata;
+			import org.spicefactory.parsley.tag.messaging.CommandDecorator;
+			import org.spicefactory.parsley.xml.mapper.XmlConfigurationNamespaceRegistry;
+			import org.spicefactory.parsley.xml.mapper.XmlObjectDefinitionMapperFactory;
+			import org.spicefactory.parsley.xml.tag.CommandDecoratorTag;
+			import org.spicefactory.parsley.xml.tag.DynamicCommandXmlTag;
+
+			import mx.logging.LogEventLevel;
+	 
+			private var core:FlexUnitCore;
+			
+			public function run():void {
+				
+				Metadata.registerMetadataClass(CommandDecorator);
+				
+				XmlConfigurationNamespaceRegistry
+					.getNamespace(XmlObjectDefinitionMapperFactory.PARSLEY_NAMESPACE_URI)
+					.choiceId(XmlObjectDefinitionMapperFactory.CHOICE_ID_DECORATORS, CommandDecoratorTag)
+					.choiceId(XmlObjectDefinitionMapperFactory.CHOICE_ID_ROOT_ELEMENTS, DynamicCommandXmlTag);
+				
+				core = new FlexUnitCore();
+				core.addListener(new UIListener(uiListener));
+				core.run( MainSuite );
+			}
+	 
+		]]>
+	</mx:Script>
+	
+	<mx:TraceTarget level="{LogEventLevel.INFO}">
+		<mx:filters>
+			<mx:String>org.spicefactory.*</mx:String>
+		</mx:filters>
+	</mx:TraceTarget>
+	
+	<adobe:TestRunnerBase id="uiListener" width="100%" height="100%"  />
+	
+</mx:Application>
