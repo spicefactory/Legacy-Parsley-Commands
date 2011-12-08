@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<componentPackage>
+	<component id="DynamicCommand" class="org.spicefactory.parsley.tag.messaging.DynamicCommandTag"/>
+	
+	<component id="LegacyDynamicCommandXmlSupport" class="org.spicefactory.parsley.command.legacy.LegacyDynamicCommandXmlSupport"/>
+	<component id="LegacyCommandMetadataSupport" class="org.spicefactory.parsley.command.legacy.LegacyCommandMetadataSupport"/>
+</componentPackage>
