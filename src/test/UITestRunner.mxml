@@ -10,12 +10,8 @@
 
 			import org.flexunit.listeners.UIListener;
 			import org.flexunit.runner.FlexUnitCore;
-			import org.spicefactory.lib.reflect.Metadata;
-			import org.spicefactory.parsley.tag.messaging.CommandDecorator;
-			import org.spicefactory.parsley.xml.mapper.XmlConfigurationNamespaceRegistry;
-			import org.spicefactory.parsley.xml.mapper.XmlObjectDefinitionMapperFactory;
-			import org.spicefactory.parsley.xml.tag.CommandDecoratorTag;
-			import org.spicefactory.parsley.xml.tag.DynamicCommandXmlTag;
+			import org.spicefactory.parsley.command.legacy.LegacyCommandMetadataSupport;
+			import org.spicefactory.parsley.command.legacy.LegacyDynamicCommandXmlSupport;
 
 			import mx.logging.LogEventLevel;
 	 
@@ -23,12 +19,8 @@
 			
 			public function run():void {
 				
-				Metadata.registerMetadataClass(CommandDecorator);
-				
-				XmlConfigurationNamespaceRegistry
-					.getNamespace(XmlObjectDefinitionMapperFactory.PARSLEY_NAMESPACE_URI)
-					.choiceId(XmlObjectDefinitionMapperFactory.CHOICE_ID_DECORATORS, CommandDecoratorTag)
-					.choiceId(XmlObjectDefinitionMapperFactory.CHOICE_ID_ROOT_ELEMENTS, DynamicCommandXmlTag);
+				LegacyDynamicCommandXmlSupport.initialize();
+				LegacyCommandMetadataSupport.initialize();
 				
 				core = new FlexUnitCore();
 				core.addListener(new UIListener(uiListener));
