@@ -304,7 +304,7 @@ class Processor implements CommandObserverProcessor {
 		return true;
 	}
 
-	public function get status (): CommandStatus {
+	public function get commandStatus (): CommandStatus {
 		return _status;
 	}
 
