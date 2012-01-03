@@ -16,6 +16,8 @@
 
 package org.spicefactory.parsley.command.legacy {
 
+import org.spicefactory.parsley.core.bootstrap.BootstrapConfig;
+import org.spicefactory.parsley.core.bootstrap.BootstrapConfigProcessor;
 import org.spicefactory.parsley.xml.mapper.XmlConfigurationNamespaceRegistry;
 import org.spicefactory.parsley.xml.mapper.XmlObjectDefinitionMapperFactory;
 import org.spicefactory.parsley.xml.tag.CommandDecoratorTag;
@@ -28,7 +30,7 @@ import org.spicefactory.parsley.xml.tag.DynamicCommandXmlTag;
  * 
  * @author Jens Halm
  */
-public class LegacyDynamicCommandXmlSupport {
+public class LegacyDynamicCommandXmlSupport implements BootstrapConfigProcessor {
 	
 	
 	private static var initialized:Boolean = false;
@@ -47,6 +49,13 @@ public class LegacyDynamicCommandXmlSupport {
 			.choiceId(XmlObjectDefinitionMapperFactory.CHOICE_ID_ROOT_ELEMENTS, DynamicCommandXmlTag);
 		
 		initialized = true;
+	}
+	
+	/**
+	 * @inheritDoc
+	 */
+	public function processConfig (config: BootstrapConfig): void {
+		initialize();
 	}
 	
 	

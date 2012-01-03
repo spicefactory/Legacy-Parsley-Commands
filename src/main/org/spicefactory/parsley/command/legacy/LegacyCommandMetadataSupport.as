@@ -16,6 +16,8 @@
 
 package org.spicefactory.parsley.command.legacy {
 
+import org.spicefactory.parsley.core.bootstrap.BootstrapConfig;
+import org.spicefactory.parsley.core.bootstrap.BootstrapConfigProcessor;
 import org.spicefactory.lib.reflect.Metadata;
 import org.spicefactory.parsley.tag.messaging.CommandDecorator;
 
@@ -26,7 +28,7 @@ import org.spicefactory.parsley.tag.messaging.CommandDecorator;
  * 
  * @author Jens Halm
  */
-public class LegacyCommandMetadataSupport {
+public class LegacyCommandMetadataSupport implements BootstrapConfigProcessor {
 	
 	
 	private static var initialized:Boolean = false;
@@ -42,6 +44,13 @@ public class LegacyCommandMetadataSupport {
 		Metadata.registerMetadataClass(CommandDecorator);
 		
 		initialized = true;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function processConfig (config: BootstrapConfig): void {
+		initialize();
 	}
 	
 	
