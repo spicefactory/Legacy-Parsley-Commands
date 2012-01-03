@@ -10,8 +10,8 @@ import org.spicefactory.parsley.command.model.CommandExecutors;
 import org.spicefactory.parsley.command.model.CommandExecutorsMetadata;
 import org.spicefactory.parsley.command.model.OverrideCommandResultModel;
 import org.spicefactory.parsley.command.model.SimpleResultObserver;
+import org.spicefactory.parsley.context.ContextBuilder;
 import org.spicefactory.parsley.core.context.Context;
-import org.spicefactory.parsley.dsl.context.ContextBuilder;
 import org.spicefactory.parsley.flex.FlexConfig;
 import org.spicefactory.parsley.messaging.messages.TestEvent;
 

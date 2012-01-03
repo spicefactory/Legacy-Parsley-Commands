@@ -1,7 +1,8 @@
 <mx:Object 
 	xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:msg="org.spicefactory.parsley.tag.messaging.*"
-	xmlns:lc="org.spicefactory.parsley.tag.lifecycle.*"
+	xmlns:lc="org.spicefactory.parsley.lifecycle.tag.*"
+	xmlns:inject="org.spicefactory.parsley.inject.tag.*"
 	xmlns:flextag="org.spicefactory.parsley.tag.core.*">
 	
 	<mx:Script>
@@ -17,7 +18,7 @@
 	<msg:DynamicCommandTag type="{DynamicCommand}" messageType="{TestEvent}" selector="command2" error="errorHandler"/>
 		
 	<msg:DynamicCommandTag type="{DynamicCommand}" messageType="{TestEvent}" selector="command3">
-		<flextag:PropertyTag name="prop" value="9"/>
+		<inject:PropertyTag name="prop" value="9"/>
 		<lc:DestroyMethodDecorator method="destroy"/>
 	</msg:DynamicCommandTag>
 	

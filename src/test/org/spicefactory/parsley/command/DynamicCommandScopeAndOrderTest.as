@@ -1,5 +1,6 @@
 package org.spicefactory.parsley.command {
 
+import org.spicefactory.parsley.comobserver.CommandComplete;
 import org.hamcrest.assertThat;
 import org.hamcrest.object.equalTo;
 import org.spicefactory.lib.command.result.ResultProcessors;
@@ -8,11 +9,11 @@ import org.spicefactory.parsley.command.mock.MockResultProcessor;
 import org.spicefactory.parsley.command.model.DynamicCommandObserverOrder;
 import org.spicefactory.parsley.command.model.OrderBuilder;
 import org.spicefactory.parsley.command.model.OrderedMixedScopeCompleteHandlers;
+import org.spicefactory.parsley.context.ContextBuilder;
+import org.spicefactory.parsley.core.builder.ObjectDefinitionBuilder;
 import org.spicefactory.parsley.core.context.Context;
 import org.spicefactory.parsley.core.registry.DynamicObjectDefinition;
 import org.spicefactory.parsley.core.scope.ScopeName;
-import org.spicefactory.parsley.dsl.ObjectDefinitionBuilder;
-import org.spicefactory.parsley.dsl.context.ContextBuilder;
 import org.spicefactory.parsley.dsl.messaging.impl.DynamicCommandBuilder;
 
 /**
@@ -57,16 +58,16 @@ public class DynamicCommandScopeAndOrderTest {
 	
 	private function buildCompleteHandlers (contextBuilder:ContextBuilder, instance:Object, order:Array) : void {
 		var builder:ObjectDefinitionBuilder = contextBuilder.objectDefinition().forInstance(instance);
-		builder.method("handleLocalCommand").commandComplete().scope(ScopeName.LOCAL).order(order[0]); 	// :A
-		builder.method("handleGlobalCommand").commandComplete().order(order[1]);						// :B
-		builder.method("handleLocalCommand2").commandComplete().scope(ScopeName.LOCAL).order(order[2]);	// :C
+		CommandComplete.forMethod("handleLocalCommand").scope(ScopeName.LOCAL).order(order[0]).apply(builder); 	// :A
+		CommandComplete.forMethod("handleGlobalCommand").order(order[1]).apply(builder);						// :B
+		CommandComplete.forMethod("handleLocalCommand2").scope(ScopeName.LOCAL).order(order[2]).apply(builder);	// :C
 		if (order.length > 3) {
-			builder.method("handleGlobalCommand2").commandComplete().order(order[3]);					// :D
+			CommandComplete.forMethod("handleGlobalCommand2").order(order[3]).apply(builder);					// :D
 		}
 		else {
-			builder.method("handleGlobalCommand2").commandComplete();									// :D
+			CommandComplete.forMethod("handleGlobalCommand2").apply(builder);									// :D
 		}
-		builder.method("interceptLocalCommand").commandComplete().scope(ScopeName.LOCAL);				// :I
+		CommandComplete.forMethod("interceptLocalCommand").scope(ScopeName.LOCAL).apply(builder);				// :I
 		builder.asSingleton().register();
 	}
 	

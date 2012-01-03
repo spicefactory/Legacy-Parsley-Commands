@@ -15,29 +15,29 @@
  */
 package org.spicefactory.parsley.command.legacy {
 
-	import org.spicefactory.lib.command.light.LightCommandAdapter;
-	import org.spicefactory.lib.command.CommandResult;
-	import org.spicefactory.lib.command.adapter.CommandAdapter;
-	import org.spicefactory.lib.command.base.AbstractSuspendableCommand;
-	import org.spicefactory.lib.command.base.DefaultCommandResult;
-	import org.spicefactory.lib.command.builder.CommandProxyBuilder;
-	import org.spicefactory.lib.command.data.CommandData;
-	import org.spicefactory.lib.command.data.DefaultCommandData;
-	import org.spicefactory.lib.command.events.CommandEvent;
-	import org.spicefactory.lib.command.events.CommandFailure;
-	import org.spicefactory.lib.command.lifecycle.CommandLifecycle;
-	import org.spicefactory.lib.command.lifecycle.DefaultCommandLifecycle;
-	import org.spicefactory.lib.command.proxy.CommandProxy;
-	import org.spicefactory.lib.command.result.ResultProcessors;
-	import org.spicefactory.lib.logging.LogContext;
-	import org.spicefactory.lib.logging.Logger;
-	import org.spicefactory.lib.reflect.Method;
-	import org.spicefactory.lib.reflect.Parameter;
-	import org.spicefactory.lib.reflect.types.Void;
-	import org.spicefactory.parsley.core.errors.ContextError;
-	import org.spicefactory.parsley.core.messaging.Message;
-	import org.spicefactory.parsley.core.messaging.MessageState;
-	import org.spicefactory.parsley.dsl.command.ManagedCommandLifecycle;
+import org.spicefactory.lib.command.CommandResult;
+import org.spicefactory.lib.command.adapter.CommandAdapter;
+import org.spicefactory.lib.command.base.AbstractSuspendableCommand;
+import org.spicefactory.lib.command.base.DefaultCommandResult;
+import org.spicefactory.lib.command.builder.CommandProxyBuilder;
+import org.spicefactory.lib.command.data.CommandData;
+import org.spicefactory.lib.command.data.DefaultCommandData;
+import org.spicefactory.lib.command.events.CommandEvent;
+import org.spicefactory.lib.command.events.CommandFailure;
+import org.spicefactory.lib.command.lifecycle.CommandLifecycle;
+import org.spicefactory.lib.command.lifecycle.DefaultCommandLifecycle;
+import org.spicefactory.lib.command.light.LightCommandAdapter;
+import org.spicefactory.lib.command.proxy.CommandProxy;
+import org.spicefactory.lib.command.result.ResultProcessors;
+import org.spicefactory.lib.logging.LogContext;
+import org.spicefactory.lib.logging.Logger;
+import org.spicefactory.lib.reflect.Method;
+import org.spicefactory.lib.reflect.Parameter;
+import org.spicefactory.lib.reflect.types.Void;
+import org.spicefactory.parsley.command.impl.ManagedCommandLifecycle;
+import org.spicefactory.parsley.core.errors.ContextError;
+import org.spicefactory.parsley.core.messaging.Message;
+import org.spicefactory.parsley.core.messaging.MessageState;
 /**
  * @author Jens Halm
  */

@@ -18,9 +18,9 @@ package org.spicefactory.parsley.command.legacy {
 import org.spicefactory.lib.command.CommandResult;
 import org.spicefactory.lib.command.lifecycle.CommandLifecycle;
 import org.spicefactory.lib.command.proxy.DefaultCommandProxy;
+import org.spicefactory.parsley.command.impl.ManagedCommandLifecycle;
 import org.spicefactory.parsley.core.command.ManagedCommandProxy;
 import org.spicefactory.parsley.core.context.DynamicObject;
-import org.spicefactory.parsley.dsl.command.ManagedCommandLifecycle;
 /**
  * @author Jens Halm
  */

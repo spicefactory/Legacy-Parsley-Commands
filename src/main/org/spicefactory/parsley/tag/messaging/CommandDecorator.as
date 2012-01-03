@@ -17,11 +17,14 @@
 package org.spicefactory.parsley.tag.messaging {
 
 import org.spicefactory.lib.errors.IllegalStateError;
+import org.spicefactory.lib.reflect.ClassInfo;
 import org.spicefactory.lib.reflect.Method;
 import org.spicefactory.lib.reflect.Parameter;
-import org.spicefactory.parsley.config.ObjectDefinitionDecorator;
-import org.spicefactory.parsley.dsl.ObjectDefinitionBuilder;
-import org.spicefactory.parsley.tag.util.ReflectionUtil;
+import org.spicefactory.parsley.core.builder.ObjectDefinitionBuilder;
+import org.spicefactory.parsley.core.builder.ObjectDefinitionDecorator;
+import org.spicefactory.parsley.messaging.processor.MethodReceiverProcessor;
+import org.spicefactory.parsley.messaging.receiver.MessageReceiverInfo;
+import org.spicefactory.parsley.messaging.tag.MessageReceiverDecoratorBase;
 
 [Metadata(name="Command", types="method", multiple="true")]
 /**
@@ -52,13 +55,26 @@ public class CommandDecorator extends MessageReceiverDecoratorBase implements Ob
 	 */
 	public function decorate (builder:ObjectDefinitionBuilder) : void {
 
-		var targetMethod: Method = ReflectionUtil.getMethod(method, builder.typeInfo);
+		var targetMethod: Method = builder.typeInfo.getMethod(method);
+		if (!targetMethod) {
+			throw new IllegalStateError("Target class " + builder.typeInfo.name 
+					+ " does not contain a method with name " + method);
+		}
 		validateMethod(targetMethod);
 		
 		if (!type) type = deduceMessageType(targetMethod);
+		
+		var info: MessageReceiverInfo = new MessageReceiverInfo();
+		info.type = ClassInfo.forClass(type, builder.registry.domain);
+		info.selector = selector;
+		info.order = order;
 			
-		var f: ReceiverFactory = new ReceiverFactory(targetMethod, builder.config.context, type, selector, order, messageProperties);
-		builder.lifecycle().messageReceiverFactory(f, scope);
+		var factory:Function = function (): Object {
+			var factory: CommandFactory = new CommandFactory(targetMethod, builder.registry.context, messageProperties);
+			return new MethodCommandProxy(factory, builder.registry.context, info);
+		};
+		
+		builder.method(method).process(new MethodReceiverProcessor(factory, scope));
 			
 	}
 	
@@ -66,7 +82,7 @@ public class CommandDecorator extends MessageReceiverDecoratorBase implements Ob
 		var paramCount: int = method.parameters.length;
 		if (!messageProperties && paramCount > 1) {
 			throw new IllegalStateError("At most one parameter allowed on method with name " + method 
-					+ " on target type " + type.name);
+					+ " on target type " + type);
 		}
 	}
 	
@@ -81,53 +97,24 @@ public class CommandDecorator extends MessageReceiverDecoratorBase implements Ob
 
 import org.spicefactory.lib.reflect.ClassInfo;
 import org.spicefactory.lib.reflect.Method;
+import org.spicefactory.parsley.command.impl.MappedCommandProxy;
 import org.spicefactory.parsley.command.legacy.LegacyCommandMethodProxy;
 import org.spicefactory.parsley.core.command.ManagedCommandFactory;
 import org.spicefactory.parsley.core.command.ManagedCommandProxy;
 import org.spicefactory.parsley.core.context.Context;
 import org.spicefactory.parsley.core.context.provider.ObjectProvider;
-import org.spicefactory.parsley.core.messaging.receiver.MessageReceiver;
-import org.spicefactory.parsley.dsl.command.MappedCommandProxy;
-import org.spicefactory.parsley.processor.messaging.MessageReceiverFactory;
-
-class ReceiverFactory implements MessageReceiverFactory {
-
-	private var method: Method;
-	private var context: Context;
-	
-	private var messageType: Class;
-	private var selector: *;
-	private var order: int;
-	
-	private var messageProperties: Array;
-
-	function ReceiverFactory (method: Method, context: Context, messageType: Class, selector: *, order: int, messageProperties: Array) {
-		this.method = method;
-		this.context = context;
-		this.messageType = messageType;
-		this.selector = selector;
-		this.order = order;	
-		this.messageProperties = messageProperties;
-	}
-
-	public function createReceiver (provider: ObjectProvider): MessageReceiver {
-		var factory: CommandFactory = new CommandFactory(provider, method, context, messageProperties);
-		return new MappedCommandProxy(factory, context, messageType, selector, order);
-	}
-	
-	
-}
+import org.spicefactory.parsley.messaging.receiver.MessageReceiverInfo;
+import org.spicefactory.parsley.messaging.receiver.MethodReceiver;
 
 class CommandFactory implements ManagedCommandFactory {
 
-	private var provider: ObjectProvider;
+	public var provider: ObjectProvider;
 	private var method: Method;
 	
 	private var context: Context;
 	private var messageProperties: Array;
 	
-	function CommandFactory (provider: ObjectProvider, method: Method, context: Context, messageProperties: Array) {
-		this.provider = provider;
+	function CommandFactory (method: Method, context: Context, messageProperties: Array) {
 		this.method = method;
 		this.context = context;
 		this.messageProperties = messageProperties;
@@ -139,6 +126,22 @@ class CommandFactory implements ManagedCommandFactory {
 
 	public function get type (): ClassInfo {
 		return provider.type;
+	}
+	
+}
+
+class MethodCommandProxy extends MappedCommandProxy implements MethodReceiver {
+
+
+	private var factory: CommandFactory;
+
+	function MethodCommandProxy (factory: CommandFactory, context: Context, info: MessageReceiverInfo) {
+		super(factory, context, info);
+		this.factory = factory;
+	}
+	
+	public function init (provider: ObjectProvider, method: Method): void {
+		factory.provider = provider;
 	}
 	
 }

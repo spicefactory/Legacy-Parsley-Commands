@@ -17,14 +17,16 @@
 package org.spicefactory.parsley.dsl.messaging.impl {
 
 import org.spicefactory.lib.errors.IllegalStateError;
+import org.spicefactory.lib.reflect.ClassInfo;
 import org.spicefactory.lib.reflect.Method;
 import org.spicefactory.lib.reflect.Parameter;
+import org.spicefactory.parsley.command.impl.MappedCommandProxy;
 import org.spicefactory.parsley.command.legacy.LegacyDynamicCommandDefinition;
 import org.spicefactory.parsley.core.context.Context;
 import org.spicefactory.parsley.core.events.ContextEvent;
 import org.spicefactory.parsley.core.messaging.receiver.MessageTarget;
 import org.spicefactory.parsley.core.registry.DynamicObjectDefinition;
-import org.spicefactory.parsley.dsl.command.MappedCommandProxy;
+import org.spicefactory.parsley.messaging.receiver.MessageReceiverInfo;
 
 /**
  * A builder for a DynamicCommand, a short-lived object that gets created for a matching message
@@ -45,11 +47,11 @@ import org.spicefactory.parsley.dsl.command.MappedCommandProxy;
 public class DynamicCommandBuilder {
 
 
+	private var info:MessageReceiverInfo;
+
 	private var _scope:String;
 	private var _messageType:Class;
-	private var _selector:*;
 	private var _messageProperties:Array;
-	private var _order:int = int.MAX_VALUE;
 	
 	private var _execute:String = "execute";
 	private var _result:String;
@@ -75,6 +77,7 @@ public class DynamicCommandBuilder {
 	 */
 	function DynamicCommandBuilder (targetDef:DynamicObjectDefinition) {
 		this.targetDef = targetDef; 
+		this.info = new MessageReceiverInfo();
 	}
 	
 
@@ -109,7 +112,7 @@ public class DynamicCommandBuilder {
 	 * @return this builder for method chaining
 	 */
 	public function selector (value:*) : DynamicCommandBuilder {
-		_selector = value;
+		info.selector = value;
 		return this;
 	}
 	
@@ -133,7 +136,7 @@ public class DynamicCommandBuilder {
 	 * @return this builder for method chaining
 	 */
 	public function order (value:int) : DynamicCommandBuilder {
-		_order = value;
+		info.order = value;
 		return this;
 	}
 	
@@ -196,11 +199,12 @@ public class DynamicCommandBuilder {
 		var errorMethod: Method = getMethod(_error, 3);
 		
 		if (!_messageType) _messageType = deduceMessageType();
+		info.type = ClassInfo.forClass(_messageType, targetDef.registry.domain);
 		
 		var def: LegacyDynamicCommandDefinition 
 				= new LegacyDynamicCommandDefinition(targetDef, executeMethod, resultMethod, errorMethod, _messageProperties);
 		var factory: Factory = new Factory(def);
-		target = new MappedCommandProxy(factory, targetDef.registry.context, _messageType, _selector, _order);
+		target = new MappedCommandProxy(factory, targetDef.registry.context, info);
 				
 		targetDef.registry.context.scopeManager.getScope(_scope).messageReceivers.addTarget(target);
 		

@@ -16,7 +16,7 @@
 
 package org.spicefactory.parsley.tag.messaging {
 
-import org.spicefactory.parsley.config.Configuration;
+import org.spicefactory.parsley.core.registry.ObjectDefinitionRegistry;
 import org.spicefactory.parsley.config.RootConfigurationElement;
 import org.spicefactory.parsley.core.registry.DynamicObjectDefinition;
 import org.spicefactory.parsley.dsl.messaging.impl.DynamicCommandBuilder;
@@ -98,7 +98,7 @@ public class DynamicCommandTag implements RootConfigurationElement {
 	 */
 	public var error:String;
 	
-	[ArrayElementType("org.spicefactory.parsley.config.ObjectDefinitionDecorator")]
+	[ArrayElementType("org.spicefactory.parsley.core.builder.ObjectDefinitionDecorator")]
 	[ChoiceId("decorators")]
 	/**
 	 * @copy org.spicefactory.parsley.tag.core.RootObjectTag#decorators
@@ -109,9 +109,9 @@ public class DynamicCommandTag implements RootConfigurationElement {
 	/**
 	 * @inheritDoc
 	 */
-	public function process (config:Configuration) : void {
+	public function process (registry:ObjectDefinitionRegistry) : void {
 		
-		var targetDef:DynamicObjectDefinition = config.builders
+		var targetDef:DynamicObjectDefinition = registry.builders
 			.forClass(type)
 				.asDynamicObject()
 					.decorators(decorators)
